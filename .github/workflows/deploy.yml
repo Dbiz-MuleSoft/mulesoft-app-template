@@ -1,0 +1,22 @@
+name: Mule Deploy
+ 
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+ 
+jobs:
+  deploy:
+    uses: Dbiz-MuleSoft/mulesoft-resuable-workflow/.github/workflows/mule-deploy.yml@main
+    with:
+      app_name: ${{ github.event.repository.name }}
+      anypoint_env: ${{ vars.ANYPOINT_ENV }}
+      ch_target: ${{ vars.CH2_TARGET }}
+      business_group: ${{ vars.BUSINESS_GROUP }}
+      app_runtime: '4.11.0'
+      cloudhub_region: 'us-east-1'
+      clodhub_replicas: '1'
+      cloudhub_vcores: '0.1'
+    secrets: inherit

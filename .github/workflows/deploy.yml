@@ -10,4 +10,6 @@ on:
 jobs:
   deploy:
     uses: Dbiz-MuleSoft/mulesoft-resuable-workflow/.github/workflows/mule-deploy.yml@main
+    with:
+         business_group: ${{ vars.BUSINESS_GROUP }}
     secrets: inherit

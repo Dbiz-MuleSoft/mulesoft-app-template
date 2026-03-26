@@ -16,6 +16,5 @@ jobs:
       ch_target: ${{ vars.CH2_TARGET }}
       business_group: ${{ vars.BUSINESS_GROUP }}
       app_runtime: '4.11.0'
-      cloudhub_region: 'us-east-1'
       cloudhub_vcores: '0.1'
     secrets: inherit

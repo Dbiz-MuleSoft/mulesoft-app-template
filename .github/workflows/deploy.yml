@@ -15,7 +15,8 @@ jobs:
       anypoint_env: ${{ vars.ANYPOINT_ENV }}
       ch_target: ${{ vars.CH2_TARGET }}
       business_group: ${{ vars.BUSINESS_GROUP }}
-      app_runtime: '4.11.0'
-      cloudhub_vcores: '0.05'
+      app_runtime: '4.11.2'
+      clodhub_replicas: '1'
+      cloudhub_vcores: '0.1'
       cloudhub.region: 'us-east-2'
     secrets: inherit

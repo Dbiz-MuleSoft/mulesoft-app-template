@@ -9,7 +9,7 @@ on:
  
 jobs:
   deploy:
-    uses: Dbiz-MuleSoft/mulesoft-reusable-workflow/.github/workflows/mule-deploy.yml@main
+    uses: Dbiz-MuleSoft/mulesoft-resuable-workflow/.github/workflows/mule-deploy.yml@main
     with:
       app_name: ${{ github.event.repository.name }}
       anypoint_env: ${{ vars.ANYPOINT_ENV }}

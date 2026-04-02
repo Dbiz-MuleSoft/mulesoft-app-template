@@ -27,7 +27,6 @@ on:
 jobs:
   deploy-mule-app:
     runs-on: ubuntu-latest
-    
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -39,29 +38,10 @@ jobs:
           distribution: 'zulu'
           cache: 'maven'
 
-      # STEP 1: Create the settings.xml dynamically
-      # This is the "Secret Sauce" that lets Maven talk to Exchange
-      - name: Create Maven settings.xml
+      # We skip creating the settings.xml for now to focus on a successful CloudHub deploy
+      - name: Deploy to CloudHub
         run: |
-          mkdir -p ~/.m2
-          cat > ~/.m2/settings.xml <<EOF
-          <settings>
-            <servers>
-              <server>
-                <id>anypoint-exchange-v3</id>
-                <username>~~~Client~~~</username>
-                <password>${{ secrets.ANYPOINT_CLIENT_ID }}~?~${{ secrets.ANYPOINT_CLIENT_SECRET }}</password>
-              </server>
-            </servers>
-          </settings>
-          EOF
-
-      # STEP 2: Execute ONE command for both Exchange and CloudHub
-      # 'mvn deploy' sends it to Exchange (using settings.xml)
-      # '-DmuleDeploy' sends it to CloudHub (using command line flags)
-      - name: Build, Publish, and Deploy
-        run: |
-          mvn clean deploy -DmuleDeploy \
+          mvn clean package deploy -DmuleDeploy \
           -Dconnected.app.clientId="${{ secrets.ANYPOINT_CLIENT_ID }}" \
           -Dconnected.app.clientSecret="${{ secrets.ANYPOINT_CLIENT_SECRET }}" \
           -Danypoint.env="${{ vars.ANYPOINT_ENV }}" \
@@ -70,5 +50,4 @@ jobs:
           -Dbusiness.group="${{ vars.BUSINESS_GROUP }}" \
           -DgenerateDefaultPublicUrl=true \
           -DskipTests \
-          -DskipImageValidation=true \
           -DskipPromotion=true

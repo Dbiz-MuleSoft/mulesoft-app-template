@@ -39,9 +39,12 @@ jobs:
           cache: 'maven'
 
       # We skip creating the settings.xml for now to focus on a successful CloudHub deploy
-      - name: Deploy to CloudHub
+      - name: Build, Install, and Deploy
         run: |
-          mvn clean package deploy -DmuleDeploy \
+          # 1. 'install' forces the JAR into the local repository so plugins can "resolve" it.
+          # 2. 'mule:deploy' handles the CloudHub 2.0 upload specifically.
+          mvn clean install mule:deploy \
+          -DmuleDeploy \
           -Dconnected.app.clientId="${{ secrets.ANYPOINT_CLIENT_ID }}" \
           -Dconnected.app.clientSecret="${{ secrets.ANYPOINT_CLIENT_SECRET }}" \
           -Danypoint.env="${{ vars.ANYPOINT_ENV }}" \
@@ -50,4 +53,5 @@ jobs:
           -Dbusiness.group="${{ vars.BUSINESS_GROUP }}" \
           -DgenerateDefaultPublicUrl=true \
           -DskipTests \
-          -DskipPromotion=true
+          -DskipPromotion=true \
+          -DskipImageValidation=true

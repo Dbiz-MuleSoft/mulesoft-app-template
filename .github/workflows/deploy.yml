@@ -3,10 +3,31 @@ name: Automated CloudHub Deployment
 on:
   push:
     branches: [ main ] # Ensure this matches your branch name (main or master)
+  workflow_call:
+    inputs:
+      anypoint_env:
+        required: true
+        type: string
+      ch_target:
+        required: true
+        type: string
+      business_group:
+        required: true
+        type: string
+      app_runtime:
+        required: false
+        type: string
+        default: '4.11.2:3e'
+    secrets:
+      ANYPOINT_CLIENT_ID:
+        required: true
+      ANYPOINT_CLIENT_SECRET:
+        required: true  
 
 jobs:
   deploy-mule-app:
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -18,7 +39,27 @@ jobs:
           distribution: 'zulu'
           cache: 'maven'
 
-      - name: Deploy to CloudHub
+      # STEP 1: Create the settings.xml dynamically
+      # This is the "Secret Sauce" that lets Maven talk to Exchange
+      - name: Create Maven settings.xml
+        run: |
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml <<EOF
+          <settings>
+            <servers>
+              <server>
+                <id>anypoint-exchange-v3</id>
+                <username>~~~Client~~~</username>
+                <password>${{ secrets.ANYPOINT_CLIENT_ID }}~?~${{ secrets.ANYPOINT_CLIENT_SECRET }}</password>
+              </server>
+            </servers>
+          </settings>
+          EOF
+
+      # STEP 2: Execute ONE command for both Exchange and CloudHub
+      # 'mvn deploy' sends it to Exchange (using settings.xml)
+      # '-DmuleDeploy' sends it to CloudHub (using command line flags)
+      - name: Deploy to CloudHub and Exchange
         run: |
           mvn clean deploy -DmuleDeploy \
           -Dconnected.app.clientId=${{ secrets.ANYPOINT_CLIENT_ID }} \
@@ -26,4 +67,7 @@ jobs:
           -Danypoint.env="Sandbox" \
           -Dch.target="DBIZ-NONPROD-PS" \
           -Dapp.name="${{ github.event.repository.name }}-api" \
-          -Dbusiness.group="Digital Biz Solutions Pty Ltd"
+          -Dapp.runtime="${{ inputs.app_runtime }}" \
+          -Dbusiness.group="Digital Biz Solutions Pty Ltd" \
+          -DgenerateDefaultPublicUrl=true \
+          -DskipTests

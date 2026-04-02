@@ -59,15 +59,15 @@ jobs:
       # STEP 2: Execute ONE command for both Exchange and CloudHub
       # 'mvn deploy' sends it to Exchange (using settings.xml)
       # '-DmuleDeploy' sends it to CloudHub (using command line flags)
-      - name: Deploy to CloudHub and Exchange
+      - name: Build and Deploy
         run: |
           mvn clean deploy -DmuleDeploy \
-            -Dconnected.app.clientId=${{ secrets.ANYPOINT_CLIENT_ID }} \
-            -Dconnected.app.clientSecret=${{ secrets.ANYPOINT_CLIENT_SECRET }} \
-            -Danypoint.env="Sandbox" \
-            -Dch.target="DBIZ-NONPROD-PS" \
-            -Dapp.name="${{ github.event.repository.name }}-api" \
-            -Dbusiness.group="Digital Biz Solutions Pty Ltd" \
-            -DgenerateDefaultPublicUrl=true \
-            -DskipTests \
-            -DskipImageValidation
+          -Dconnected.app.clientId=${{ secrets.ANYPOINT_CLIENT_ID }} \
+          -Dconnected.app.clientSecret=${{ secrets.ANYPOINT_CLIENT_SECRET }} \
+          -Danypoint.env="${{ vars.ANYPOINT_ENV }}" \
+          -Dch.target="${{ vars.CH2_TARGET }}" \
+          -Dapp.name="${{ github.event.repository.name }}-api" \
+          -Dbusiness.group="${{ vars.BUSINESS_GROUP }}" \
+          -DgenerateDefaultPublicUrl=true \
+          -DskipTests \
+          -DskipImageValidation=true

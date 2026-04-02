@@ -62,12 +62,12 @@ jobs:
       - name: Deploy to CloudHub and Exchange
         run: |
           mvn clean deploy -DmuleDeploy \
-          -Dconnected.app.clientId=${{ secrets.ANYPOINT_CLIENT_ID }} \
-          -Dconnected.app.clientSecret=${{ secrets.ANYPOINT_CLIENT_SECRET }} \
-          -Danypoint.env="Sandbox" \
-          -Dch.target="DBIZ-NONPROD-PS" \
-          -Dapp.name="${{ github.event.repository.name }}-api" \
-          -Dapp.runtime="${{ inputs.app_runtime }}" \
-          -Dbusiness.group="Digital Biz Solutions Pty Ltd" \
-          -DgenerateDefaultPublicUrl=true \
-          -DskipTests
+            -Dconnected.app.clientId=${{ secrets.ANYPOINT_CLIENT_ID }} \
+            -Dconnected.app.clientSecret=${{ secrets.ANYPOINT_CLIENT_SECRET }} \
+            -Danypoint.env="Sandbox" \
+            -Dch.target="DBIZ-NONPROD-PS" \
+            -Dapp.name="${{ github.event.repository.name }}-api" \
+            -Dbusiness.group="Digital Biz Solutions Pty Ltd" \
+            -DgenerateDefaultPublicUrl=true \
+            -DskipTests \
+            -DskipImageValidation

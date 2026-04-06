@@ -32,27 +32,29 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'zulu'
-          cache: 'maven'
+          distribution: 'adopt'
+          #cache: 'maven'
 
       - name: Create Maven settings for Exchange
         run: |
           - name: Create Maven settings for User Auth
        run: |
-         mkdir -p ~/.m2
-         cat > ~/.m2/settings.xml <<EOF
-         <settings>
-           <servers>
-             <server>
-               <id>anypoint-exchange-v3</id>
-               <username>${{ secrets.ANYPOINT_USERNAME }}</username>
-               <password>${{ secrets.ANYPOINT_PASSWORD }}</password>
-             </server>
-           </servers>
-         </settings>
+         mkdir -p "$HOME/.m2"
+         #(cat > ~/.m2/settings.xml <<EOF)
+         echo "<settings> 
+                <servers>
+                   <server>
+                     <id>anypoint-exchange-v3</id>
+                     <username>${{ secrets.ANYPOINT_USERNAME }}</username>
+                     <password>${{ secrets.ANYPOINT_PASSWORD }}</password>
+                   </server>
+                </servers>
+              </settings>" > "$HOME/.m2/settings.xml"
+
+       shell: bash   
 
       # We skip creating the settings.xml for now to focus on a successful CloudHub deploy
       - name: Build, Install, and Deploy
@@ -63,10 +65,10 @@ jobs:
           -DmuleDeploy \
           -Dconnected.app.clientId="${{ secrets.ANYPOINT_CLIENT_ID }}" \
           -Dconnected.app.clientSecret="${{ secrets.ANYPOINT_CLIENT_SECRET }}" \
-          -Danypoint.env="${{ vars.ANYPOINT_ENV }}" \
-          -Dch.target="${{ vars.CH2_TARGET }}" \
+          -Danypoint.env="${{ secrets.ANYPOINT_ENV }}" \
+          -Dch.target="${{ secrets.CH2_TARGET }}" \
           -Dapp.name="${{ github.event.repository.name }}-api" \
-          -Dbusiness.group="${{ vars.BUSINESS_GROUP }}" \
+          -Dbusiness.group="${{ secrets.BUSINESS_GROUP }}" \
           -DgenerateDefaultPublicUrl=true \
           -DskipTests \
           -DskipPromotion=true \

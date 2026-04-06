@@ -38,6 +38,22 @@ jobs:
           distribution: 'zulu'
           cache: 'maven'
 
+      - name: Create Maven settings for Exchange
+        run: |
+          - name: Create Maven settings for User Auth
+       run: |
+         mkdir -p ~/.m2
+         cat > ~/.m2/settings.xml <<EOF
+         <settings>
+           <servers>
+             <server>
+               <id>anypoint-exchange-v3</id>
+               <username>${{ secrets.ANYPOINT_USERNAME }}</username>
+               <password>${{ secrets.ANYPOINT_PASSWORD }}</password>
+             </server>
+           </servers>
+         </settings>
+
       # We skip creating the settings.xml for now to focus on a successful CloudHub deploy
       - name: Build, Install, and Deploy
         run: |
